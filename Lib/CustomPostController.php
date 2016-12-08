@@ -56,12 +56,7 @@ class CustomPostController extends \WP_REST_Posts_Controller {
 					'context' => $this->get_context_param( array( 'default' => 'view' ) ),
 				),
 			),
-			array(
-				'methods'             => \WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'update_item' ),
-				'permission_callback' => array( $this, 'update_item_permissions_check' ),
-				'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE ),
-			),
+
 			array(
 				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'delete_item' ),
@@ -89,9 +84,9 @@ class CustomPostController extends \WP_REST_Posts_Controller {
 		//the route for credentials check
 		register_rest_route( $this->namespace, '/' . $this->rest_base . '/is-logged-in', array(
 			array(
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'check_if_logged_in' ),
-						)
+				'methods'  => \WP_REST_Server::READABLE,
+				'callback' => array( $this, 'check_if_logged_in' ),
+			)
 		) );
 	}
 
@@ -160,10 +155,10 @@ class CustomPostController extends \WP_REST_Posts_Controller {
 		$data = $parent_response->get_data();
 
 		//get name of the file to be served
-		if ( isset( $data[ 'title' ][ 'raw' ] ) ) {
-			$filename = $data[ 'title' ][ 'raw' ];
+		if ( isset( $data[ 'title' ][ 'rendered' ] ) ) {
+			$filename = $data[ 'title' ][ 'rendered' ];
 		} else {
-			//if wee can't access the value, we are probably not logged in.
+			//if we can't access the value, we are probably not logged in.
 			return new \WP_Error( 'rest_cannot_show', __( 'Sorry, you are not allowed to view this resource.' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 		//create a random number as access token
@@ -260,13 +255,13 @@ class CustomPostController extends \WP_REST_Posts_Controller {
 	 *
 	 * @return array|\WP_Error returns HTTP 200 if logged in, HTTP 401, if not
 	 */
-	public function check_if_logged_in(){
+	public function check_if_logged_in() {
+
 		$is_logged_in = is_user_logged_in();
-		if (!$is_logged_in){
+		if ( ! $is_logged_in ) {
 			return new \WP_Error( 'rest_wrong_credentials', __( 'You are not logged in.' ), array( 'status' => rest_authorization_required_code() ) );
-		}
-		else {
-			return array ('message'=>'You are logged in','data'=>array('status'=>200));
+		} else {
+			return array( 'message' => 'You are logged in', 'data' => array( 'status' => 200 ) );
 		}
 
 	}

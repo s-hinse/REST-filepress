@@ -10,7 +10,7 @@
 
 namespace REST_filepress;
 
-use REST_filepress\Lib\DownloadController;
+
 
 /**
  * Class plugin
